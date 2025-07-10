@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Escribir NFC</title>
+</head>
+<body style="font-family: Arial; text-align: center; padding: 2em;">
+  <h2>🚀 Escribiendo en NFC</h2>
+  <p>Serie: <strong id="serie-text"></strong></p>
+  <p>Acercá la etiqueta NFC para grabar el dato...</p>
+  <p id="status" style="color: green;"></p>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const serie = params.get("serie");
+    document.getElementById("serie-text").textContent = serie || "No recibida";
+
+    async function escribirNFC() {
+      if (!("NDEFWriter" in window)) {
+        document.getElementById("status").textContent = "⚠ Tu navegador no soporta NFC.";
+        return;
+      }
+
+      try {
+        const writer = new NDEFWriter();
+        await writer.write(serie);
+        document.getElementById("status").textContent = "✅ Etiqueta escrita correctamente";
+
+        setTimeout(() => {
+          window.location.href = "https://www.appsheet.com"; // Podés cambiar esta URL si querés volver a AppSheet
+        }, 2000);
+      } catch (error) {
+        document.getElementById("status").style.color = "red";
+        document.getElementById("status").textContent = "❌ Error: " + error;
+      }
+    }
+
+    escribirNFC();
+  </script>
+</body>
+</html>
